@@ -1,5 +1,3 @@
-package edu.txst.project;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -13,7 +11,6 @@ public class MazeGUI extends JFrame {
 	private GamePanel gamePanel;
 	private InfoPanel infoPanel;
 	private JMenuItem resetItem;
-	private int stepCounter;
 
 	public MazeGUI() {
 		setTitle("16-Bit Maze");
@@ -41,15 +38,18 @@ public class MazeGUI extends JFrame {
 					case KeyEvent.VK_LEFT -> engine.movePlayer(0, -1);
 					case KeyEvent.VK_RIGHT -> engine.movePlayer(0, 1);
 				}
+				infoPanel.setInfoSteps(currentBoard.stepCounter.getSteps());
+				infoPanel.setInfoCoins(engine.getCoins());
 				gamePanel.repaint();
 
 				// Check for victory
 				if (engine.playerWins()) {
+					int score = (infoPanel.getInfoSteps() * -1) + (infoPanel.getInfoCoins() * 5);
+
 					JOptionPane.showMessageDialog(MazeGUI.this,
-							"Congratulations! You found the exit.\nYour got "
-									+ infoPanel.getInfoSteps() * 1 + infoPanel.getInfoCoins()
-									+ "points",
-							"Level Complete", JOptionPane.INFORMATION_MESSAGE);
+							"Congratulations! You found the exit.\nYour score: " + score + "points",
+							"Level Complete", 
+							JOptionPane.INFORMATION_MESSAGE);
 
 					// Optional: Disable engine to prevent movement after win
 					engine = null;
@@ -171,7 +171,18 @@ public class MazeGUI extends JFrame {
 				case 1 -> g.setColor(Color.DARK_GRAY); // Wall
 				case 2 -> g.setColor(Color.YELLOW); // Coin
 				case 5 -> g.setColor(Color.MAGENTA); // Exit
-				case 6 -> g.setColor(Color.BLUE); // Player
+				case 6 -> { 
+					int coins = engine == null ? 0 : engine.getCoins();
+
+					if(coins >= 3){
+						g.setColor(Color.GREEN);
+					} else if (coins >= 1) {
+						g.setColor(Color.ORANGE);
+					} else {
+						g.setColor(Color.RED);
+					}
+					
+				}  // Player
 				default -> g.setColor(Color.BLACK);
 			}
 			g.fillRect(x, y, TILE_SIZE, TILE_SIZE);

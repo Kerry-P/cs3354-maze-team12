@@ -1,5 +1,3 @@
-package edu.txst.project;
-
 public class Board implements Cloneable {
 	private final int COLUMNS = 10;
 	private final int ROWS = 6;

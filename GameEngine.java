@@ -1,11 +1,10 @@
-package edu.txst.project;
-
 public class GameEngine {
 	private Board board;
 	private int playerRow;
 	private int playerCol;
 	private int exitRow;
 	private int exitCol;
+	private int coins;
 
 	// Cell Type Constants
 	private static final int FLOOR = 0;
@@ -15,17 +14,22 @@ public class GameEngine {
 	private static final int PLAYER = 6;
 
 	public GameEngine(Board board) {
+		coins = 0;
 		this.board = board;
 		findPlayer();
 		findExit();
 	}
 
 	public boolean playerWins() {
-		return false;
+		return playerRow == exitRow && playerCol == exitCol;
+	}
+
+	public int getCoins(){
+		return coins;
 	}
 
 	private void findPlayer() {
-		for (int r = 0; r < 5; r++) {
+		for (int r = 0; r < 6; r++) {
 			for (int c = 0; c < 10; c++) {
 				if (board.getCell(r, c) == PLAYER) {
 					playerRow = r;
@@ -37,7 +41,7 @@ public class GameEngine {
 	}
 
 	private void findExit() {
-		for (int r = 0; r < 5; r++) {
+		for (int r = 0; r < 6; r++) {
 			for (int c = 0; c < 10; c++) {
 				if (board.getCell(r, c) == EXIT) {
 					exitRow = r;
@@ -64,6 +68,10 @@ public class GameEngine {
 			return; // Movement blocked
 		}
 
+		if (targetCell == COIN){
+			coins++;
+		}
+
 		// Move the Player
 		// Current position becomes Floor (or Goal if player was standing on one)
 		// Note: For simplicity, this engine assumes player replaces the cell.
@@ -72,6 +80,7 @@ public class GameEngine {
 
 		playerRow = targetRow;
 		playerCol = targetCol;
+		board.stepCounter.increaseSteps();
 		board.setCell(playerRow, playerCol, PLAYER);
 
 	}
